@@ -1,22 +1,50 @@
-import sys, pygame # Подключаем библиотеки:
-pygame.init() # Запускаем Pygame.
-width = 800
-height = 600
-size = [width, height] #Размер окна: ширина = 600 , высота = 500
-speed = [1, 2] # Скорость мяча:  X = 0 (вправо и влево не движется) , Y = 2 (движется вниз)
-white = (255, 255, 255) # Белый цвет в формате RGB.
-screen = pygame.display.set_mode(size) #Создаём окно размером 600×500.
-ball = pygame.image.load("ball.webp") #Загружаем картинку мяча из файла ball.bmp.
-ballrect = ball.get_rect() #Получаем прямоугольник картинки. Он хранит координаты мяча.
-while 1: # Бесконечный цикл программы
-    for event in pygame.event.get(): #Проверяем события.
-        if event.type == pygame.QUIT: # Если нажали крестик.
-            sys.exit() #Закрываем программу.
-    ballrect = ballrect.move(speed) # Перемещаем мяч.
-    if ballrect.left < 0 or ballrect.right > width: #Проверяем: мяч коснулся левой границы или правой границы.
-        speed[0] = -speed[0] #Меняем направление по X.
-    if ballrect.top < 0 or ballrect.bottom > height: #верхнюю границу или нижнюю границу.
-        speed[1] = -speed[1] # Меняем направление по Y.
-    screen.fill(white) #Закрашиваем окно белым цветом.
-    screen.blit(ball, ballrect) #Рисуем мяч в новых координатах.
-    pygame.display.flip() #Обновляем экран.
+import pygame, random
+pygame.init()
+
+WHITE = (255, 255, 255)
+SKY_BLUE = (135, 206, 235)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
+WIDTH = 800
+HEIGHT = 600
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Ping Pong")
+clock = pygame.time.Clock()
+
+platform_x = 350
+platform_y = 570
+ball_x = 400
+ball_y = 300
+ball_dx = 3
+ball_dy = 5
+
+running = True 
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False 
+    
+    ball_x += ball_dx
+    ball_y += ball_dy
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and platform_x > 0:
+        platform_x -= 5
+    if keys[pygame.K_RIGHT] and platform_x < WIDTH - 100:
+        platform_x += 5
+
+    if ball_x <= 0 or ball_x >= WIDTH:
+        ball_dx = -ball_dx
+    if ball_y <= 0:
+        ball_dy = -ball_dy
+
+    screen.fill(SKY_BLUE)
+    pygame.draw.rect(screen, BLUE, (platform_x, platform_y, 100, 20))
+    pygame.draw.circle(screen, RED, (ball_x, ball_y), 10)
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
