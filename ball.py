@@ -20,6 +20,7 @@ ball_x = 400
 ball_y = 300
 ball_dx = 3
 ball_dy = 5
+ball_radius = 10
 
 running = True 
 while running:
@@ -27,8 +28,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False 
     
-    ball_x += ball_dx
-    ball_y += ball_dy
+    ball_x = ball_x + ball_dx
+    ball_y = ball_y + ball_dy
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] and platform_x > 0:
@@ -41,9 +42,18 @@ while running:
     if ball_y <= 0:
         ball_dy = -ball_dy
 
+    if platform_x <= ball_x <= platform_x + 100 and ball_y + ball_radius >= platform_y:
+        ball_dy = -ball_dy
+
+    if ball_y >= HEIGHT:
+        ball_x = random.randint(0, WIDTH)
+        ball_y = 0
+        ball_dx = random.choice([-3, 3])
+        ball_dy = random.choice([3, 5])
+
     screen.fill(SKY_BLUE)
     pygame.draw.rect(screen, BLUE, (platform_x, platform_y, 100, 20))
-    pygame.draw.circle(screen, RED, (ball_x, ball_y), 10)
+    pygame.draw.circle(screen, RED, (ball_x, ball_y), ball_radius)
     pygame.display.flip()
     clock.tick(60)
 
